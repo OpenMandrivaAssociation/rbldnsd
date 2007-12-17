@@ -13,7 +13,6 @@ Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 BuildRequires:	gawk
 BuildRequires:	zlib-devel
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Rbldnsd is a small, authoritative-only DNS nameserver designed to serve
