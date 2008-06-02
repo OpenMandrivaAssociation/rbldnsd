@@ -24,7 +24,7 @@ blocklists.
 
 %setup -q -n %{name}-%{version}
 
-sed -i	-e 's@/var/lib/rbldns\([/ ]\)@%{_localstatedir}/rbldnsd\1@g' \
+sed -i	-e 's@/var/lib/rbldns\([/ ]\)@%{_localstatedir}/lib/rbldnsd\1@g' \
     -e 's@\(-r/[a-z/]*\) -b@\1 -q -b@g' debian/rbldnsd.default
 
 %build
@@ -40,7 +40,7 @@ install -d %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_mandir}/man8
 install -d %{buildroot}%{_initrddir}
 install -d %{buildroot}%{_sysconfdir}/sysconfig
-install -d %{buildroot}%{_localstatedir}/rbldnsd
+install -d %{buildroot}%{_localstatedir}/lib/rbldnsd
 
 install -m0755 rbldnsd %{buildroot}%{_sbindir}
 install -m0644 rbldnsd.8 %{buildroot}%{_mandir}/man8
@@ -48,7 +48,7 @@ install -m0644 debian/rbldnsd.default %{buildroot}%{_sysconfdir}/sysconfig/rbldn
 install -m0755 %{SOURCE1} %{buildroot}%{_initrddir}/rbldnsd
 
 %pre
-%_pre_useradd rbldns %{_localstatedir}/rbldnsd /sbin/nologin
+%_pre_useradd rbldns %{_localstatedir}/lib/rbldnsd /sbin/nologin
 
 %post
 %_post_service rbldnsd
@@ -69,5 +69,5 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/sysconfig/rbldnsd
 %{_sbindir}/rbldnsd
 %{_mandir}/man8/rbldnsd.8*
-%dir %{_localstatedir}/rbldnsd
+%dir %{_localstatedir}/lib/rbldnsd
 
