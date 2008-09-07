@@ -1,7 +1,7 @@
 Summary:	Small, fast daemon to serve DNSBLs
 Name:		rbldnsd
-Version:	0.996a
-Release:	%mkrel 4
+Version:	0.996b
+Release:	%mkrel 1
 License:	GPLv2+
 Group:		System/Servers
 URL:		http://www.corpit.ru/mjt/rbldnsd.html
@@ -24,12 +24,14 @@ blocklists.
 
 %setup -q -n %{name}-%{version}
 
-sed -i	-e 's@/var/lib/rbldns\([/ ]\)@%{_localstatedir}/lib/rbldnsd\1@g' \
+sed -i	-e 's@/var/lib/rbldns\([/ ]\)@/var/lib/rbldnsd\1@g' \
     -e 's@\(-r/[a-z/]*\) -b@\1 -q -b@g' debian/rbldnsd.default
 
 %build
+%serverbuild
+
 # this is not an autotools-generated configure script, and does not support --libdir
-CFLAGS="%{optflags}" ./configure
+CFLAGS="$CFLAGS" ./configure
 
 %make
 
@@ -40,7 +42,7 @@ install -d %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_mandir}/man8
 install -d %{buildroot}%{_initrddir}
 install -d %{buildroot}%{_sysconfdir}/sysconfig
-install -d %{buildroot}%{_localstatedir}/lib/rbldnsd
+install -d %{buildroot}/var/lib/rbldnsd
 
 install -m0755 rbldnsd %{buildroot}%{_sbindir}
 install -m0644 rbldnsd.8 %{buildroot}%{_mandir}/man8
@@ -48,7 +50,7 @@ install -m0644 debian/rbldnsd.default %{buildroot}%{_sysconfdir}/sysconfig/rbldn
 install -m0755 %{SOURCE1} %{buildroot}%{_initrddir}/rbldnsd
 
 %pre
-%_pre_useradd rbldns %{_localstatedir}/lib/rbldnsd /sbin/nologin
+%_pre_useradd rbldns /var/lib/rbldnsd /sbin/nologin
 
 %post
 %_post_service rbldnsd
@@ -69,5 +71,4 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/sysconfig/rbldnsd
 %{_sbindir}/rbldnsd
 %{_mandir}/man8/rbldnsd.8*
-%dir %{_localstatedir}/lib/rbldnsd
-
+%dir /var/lib/rbldnsd
