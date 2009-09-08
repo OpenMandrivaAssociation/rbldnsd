@@ -1,7 +1,7 @@
 Summary:	Small, fast daemon to serve DNSBLs
 Name:		rbldnsd
 Version:	0.996b
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	GPLv2+
 Group:		System/Servers
 URL:		http://www.corpit.ru/mjt/rbldnsd.html
