@@ -7,6 +7,7 @@ Group:		System/Servers
 URL:		http://www.corpit.ru/mjt/rbldnsd.html
 Source0:	http://www.corpit.ru/mjt/rbldnsd/rbldnsd_%{version}.tar.gz
 Source1:	rbldnsd.init
+Patch0:		rbldnsd-0.996b-format_not_a_string_literal_and_no_format_arguments.diff
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 Requires(pre): rpm-helper
@@ -23,6 +24,7 @@ blocklists.
 %prep
 
 %setup -q -n %{name}-%{version}
+%patch0 -p0
 
 sed -i	-e 's@/var/lib/rbldns\([/ ]\)@/var/lib/rbldnsd\1@g' \
     -e 's@\(-r/[a-z/]*\) -b@\1 -q -b@g' debian/rbldnsd.default
