@@ -1,0 +1,11 @@
+--- rbldnsd.c	2006-11-24 17:35:28.000000000 +0100
++++ rbldnsd.c.oden	2009-10-05 15:49:47.000000000 +0200
+@@ -958,7 +958,7 @@ static int do_reload(int do_fork) {
+ # undef kb
+   }
+ #endif /* NO_MEMINFO */
+-  dslog(LOG_INFO, 0, ibuf);
++  dslog(LOG_INFO, 0, "%s", ibuf);
+ 
+   check_expires();
+ 
