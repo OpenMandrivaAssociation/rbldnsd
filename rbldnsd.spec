@@ -74,3 +74,78 @@ rm -rf %{buildroot}
 %{_sbindir}/rbldnsd
 %{_mandir}/man8/rbldnsd.8*
 %dir /var/lib/rbldnsd
+
+
+%changelog
+* Mon Oct 05 2009 Oden Eriksson <oeriksson@mandriva.com> 0.996b-3mdv2010.0
++ Revision: 454032
+- P0: fix format string errors
+- rebuild
+
+  + Thierry Vignaud <tvignaud@mandriva.com>
+    - rebuild
+
+* Sun Sep 07 2008 Oden Eriksson <oeriksson@mandriva.com> 0.996b-1mdv2009.0
++ Revision: 282185
+- 0.996b
+
+* Fri Aug 01 2008 Thierry Vignaud <tvignaud@mandriva.com> 0.996a-4mdv2009.0
++ Revision: 260093
+- rebuild
+
+* Fri Jul 25 2008 Thierry Vignaud <tvignaud@mandriva.com> 0.996a-3mdv2009.0
++ Revision: 247968
+- rebuild
+- kill re-definition of %%buildroot on Pixel's request
+
+  + Pixel <pixel@mandriva.com>
+    - adapt to %%_localstatedir now being /var instead of /var/lib (#22312)
+
+  + Olivier Blin <oblin@mandriva.com>
+    - restore BuildRoot
+
+* Wed Nov 14 2007 Oden Eriksson <oeriksson@mandriva.com> 0.996a-1mdv2008.1
++ Revision: 108681
+- import rbldnsd
+
+
+* Wed Nov 14 2007 Oden Eriksson <oeriksson@mandriva.com> 0.996a-1mdv2008.1
+- initial Mandriva package (fc8 import)
+
+* Thu Aug 23 2007 Paul Howarth <paul@city-fan.org> 0.996a-4
+- add buildreq gawk
+
+* Thu Aug 23 2007 Paul Howarth <paul@city-fan.org> 0.996a-3
+- upstream released a new version without changing the version number (the
+  only changes are in debian/control and debian/changelog, neither of which
+  are used in the RPM package)
+- unexpand tabs in spec
+- use the standard scriptlet for user/group creation in %%pre
+- drop scriptlet dependencies on /sbin/service by calling initscript directly
+- clarify license as GPL version 2 or later
+
+* Wed Aug 30 2006 Paul Howarth <paul@city-fan.org> 0.996a-2
+- FE6 mass rebuild
+
+* Fri Jul 28 2006 Paul Howarth <paul@city-fan.org> 0.996a-1
+- update to 0.996a
+
+* Tue Feb 21 2006 Paul Howarth <paul@city-fan.org> 0.996-1
+- update to 0.996
+- use /usr/sbin/useradd instead of %%{_sbindir}/useradd
+- add buildreq zlib-devel to support gzipped zone files
+
+* Wed Feb 15 2006 Paul Howarth <paul@city-fan.org> 0.995-5
+- license text not included in upstream tarball, so don't include it
+
+* Tue Jun 28 2005 Paul Howarth <paul@city-fan.org> 0.995-4
+- include gpl.txt as %%doc
+
+* Mon Jun 27 2005 Paul Howarth <paul@city-fan.org> 0.995-3
+- fix /etc/sysconfig/rbldnsd references to /var/lib/rbldns to point to
+  %%{_localstatedir}/lib/rbldnsd instead
+- don't enable daemons in any runlevel by default
+- add -q option to sample entries in /etc/sysconfig/rbldnsd
+
+* Fri Jun 17 2005 Paul Howarth <paul@city-fan.org> 0.995-2
+- first Fedora Extras build, largely based on upstream spec file

@@ -1,0 +1,157 @@
+#!/bin/bash
+#
+# rbldnsd      This starts and stops rbldnsd.
+#
+# chkconfig: - 80 30
+# description: rbldnsd is a DNS daemon for DNSBLs. Configure it in \
+#              /etc/sysconfig/rbldnsd
+#
+# processname: /usr/sbin/rbldnsd
+# config: /etc/sysconfig/network
+# config: /etc/sysconfig/rbldnsd
+# pidfile: /var/run/rbldnsd*.pid
+
+PATH=/sbin:/bin:/usr/bin:/usr/sbin
+prog=rbldnsd
+DAEMON=/usr/sbin/$prog
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Get config.
+[ -f /etc/sysconfig/network ] && . /etc/sysconfig/network
+[ -f /etc/sysconfig/rbldnsd ] && . /etc/sysconfig/rbldnsd
+
+# Check that networking is up and the rbldnsd binary is available
+[ "${NETWORKING}" = "yes" ] || exit 0
+[ -f $DAEMON ] || exit 1
+
+# Check that configuration has been set up (RBLDNSD set in /etc/sysconfig/rbldnsd)
+[ -n "$RBLDNSD" ] || exit 1
+
+# Process multiple instances of the daemon (see /etc/sysconfig/rbldnsd)
+for_all_daemons() {
+	echo "$RBLDNSD" |
+		while read name args; do
+			# generate pidfile name from key
+			case "$name" in
+				""|\#*)	continue;;
+				-)		name=$prog; pidfile=/var/run/$name.pid;;
+				*)		pidfile=/var/run/rbldnsd-$name.pid;;
+			esac
+			# if pidfile exists, get pid and check for running rbldnsd
+			pid=
+			if [ -f $pidfile ]; then
+				read p < $pidfile
+				if [ -n "$p" -a -f /proc/$p/cmdline ]; then
+					case "`cat /proc/$p/cmdline 2>/dev/null`" in
+						*$prog*) pid=$p;;
+					esac
+				fi
+			fi
+			# Start/stop this daemon
+			$1
+		done
+}
+
+start_one_daemon() {
+	RETVAL=0
+	if [ ! "$pid" ]; then
+		echo -n $"Starting $prog: "
+		[ x"$name" != x"$prog" ] && echo -n "$name "
+		daemon $DAEMON -p $pidfile $args
+		RETVAL=$?
+		echo
+	fi
+	return $RETVAL
+}
+
+stop_one_daemon() {
+	RETVAL=0
+	if [ "$pid" ]; then
+		echo -n $"Stopping $prog: "
+		[ x"$name" != x"$prog" ] && echo -n "$name "
+		kill $pid
+		usleep 500000
+		checkpid $pid
+		RETVAL=$?
+		[ "$RETVAL" = 1 ] && echo_success || echo_failure
+		echo
+		rm -f $pidfile
+	fi
+	return $RETVAL
+}
+
+reload_one_daemon() {
+	if [ "$pid" ]; then
+		echo -n $"Reloading $prog: "
+		[ x"$name" != x"$prog" ] && echo -n "$name "
+		kill -HUP $pid
+		checkpid $pid && echo_success || echo_failure
+		RETVAL=$?
+		echo
+	fi
+}
+
+check_one_daemon() {
+	echo -n "$prog "
+	[ x"$name" != x"$prog" ] && echo -n "[$name] "
+	if [ "$pid" ]; then
+		echo $"($pid) is running..."
+		return 0
+	fi
+	if [ -f "$pidfile" ]; then
+		echo $"dead but pid file exists"
+		return 1
+	fi
+	if [ -e /var/lock/subsys/$prog ]; then
+		echo $"dead but subsys locked"
+		return 2
+	fi
+	echo $"is stopped"
+	return 3
+}
+
+restart_one_daemon() {
+	stop_one_daemon
+	pid=
+	start_one_daemon
+}
+
+condrestart_one_daemon() {
+	[ -e /var/lock/subsys/$prog ] && restart_one_daemon
+	return 0
+}
+
+# See how we were called.
+case "$1" in
+	start)
+		for_all_daemons start_one_daemon
+		touch /var/lock/subsys/$prog
+		;;
+	restart)
+		for_all_daemons restart_one_daemon
+		touch /var/lock/subsys/$prog
+		;;
+	reload)
+		for_all_daemons reload_one_daemon
+		;;
+	stop)
+		for_all_daemons stop_one_daemon
+		rm -f /var/lock/subsys/$prog
+		;;
+	status)
+		for_all_daemons check_one_daemon
+		;;
+	condrestart)
+		for_all_daemons condrestart_one_daemon
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|status|restart|condrestart|reload}" >&2
+		RETVAL=1
+		;;
+esac
+
+exit $RETVAL
+
+# vi: shiftwidth=4 tabstop=4 syntax=sh
