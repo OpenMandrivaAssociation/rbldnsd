@@ -4,7 +4,7 @@ Version:	0.996b
 Release:	4
 License:	GPLv2+
 Group:		System/Servers
-URL:		http://www.corpit.ru/mjt/rbldnsd.html
+URL:		https://www.corpit.ru/mjt/rbldnsd.html
 Source0:	http://www.corpit.ru/mjt/rbldnsd/rbldnsd_%{version}.tar.gz
 Source1:	rbldnsd.init
 Patch0:		rbldnsd-0.996b-format_not_a_string_literal_and_no_format_arguments.diff
